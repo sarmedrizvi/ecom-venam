@@ -17,12 +17,12 @@
       // Cart logic
       console.log({ cart });
       // Add item to cart
-      function addItemToCart(id, name, price, quantity) {
+      function addItemToCart(id, name, price, quantity, color) {
         const existingItem = cart.find((item) => item.id === id);
         if (existingItem) {
-          existingItem.quantity = +(quantity || +existingItem.quantity + 1);
+          existingItem.quantity += +quantity;
         } else {
-          cart.push({ id, name, price, quantity: +(quantity || 1) });
+          cart.push({ id, name, price, quantity: +(quantity || 1), color });
         }
         localStorage.setItem("cartItem", JSON.stringify(cart));
         updateCart();
@@ -31,6 +31,9 @@
       // Delete item from cart
       function deleteItemFromCart(id) {
         cart = cart.filter((item) => item.id !== id);
+        const quantity = document.getElementById(`quantity-${id}`);
+        if (quantity) quantity.value = 1;
+        localStorage.setItem("cartItem", cart);
         updateCart();
       }
 
@@ -64,7 +67,7 @@
                         ).toFixed(2)} RS</span>
                         <span> (${item.quantity} x ${item.price.toFixed(
             2
-          )} RS)</span>
+          )} RS) ${item.color ? `<br/> Color: ${item.color}` : ""} </span>
                       </div>
                     </div>
                     <div class="del-icon">
@@ -84,8 +87,7 @@
                 </li>
                 <li>
                   <div class="checkout-link">
-                    <a href="#">Shopping Cart</a>
-                    <a class="red-color" href="#">Checkout</a>
+                    <a class="red-color" href="/checkout">Checkout</a>
                   </div>
                 </li>`;
 
@@ -113,7 +115,7 @@
                   </div>
                   <div class="navbar-wrap main-menu d-none d-lg-flex">
                     <ul class="navigation">
-                      <li><a href="#">Home</a></li>
+                      <li><a href="index.html">Home</a></li>
                       <li><a href="index.html#blog">BLOG</a></li>
                     </ul>
                   </div>
