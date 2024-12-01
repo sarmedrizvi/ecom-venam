@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html class="no-js" lang="">
+  <head>
+    <!-- Other head elements -->
+    <script>
+      let cart = JSON.parse(localStorage.getItem("cartItems") || "[]") || [];
+      // Your cart logic here
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("DOM fully loaded and parsed");
+        updateCart();
+
+        // cart.map((item) => addItemToCart(item.id, item.name, item.price));
+      });
+
+      // Cart logic
+      console.log({ cart });
+      // Add item to cart
+      function addItemToCart(id, name, price, quantity, image, color) {
+        const existingItem = cart.find((item) => item.id === id);
+        if (existingItem) {
+          existingItem.quantity += +quantity;
+        } else {
+          cart.push({
+            id,
+            name,
+            price,
+            quantity: +(quantity || 1),
+            color,
+            image,
+          });
+        }
+        localStorage.setItem("cartItems", JSON.stringify(cart));
+        updateCart();
+      }
+
+      // Delete item from cart
+      function deleteItemFromCart(id) {
+        console.log("id", id);
+        cart = cart.filter((item) => item.id != id);
+        localStorage.setItem("cartItems", JSON.stringify(cart));
+        updateCart();
+      }
+
+      // Update cart display
+      function updateCart() {
+        const cartCountElement = document.querySelector(".cart-count");
+        const cartTotalPriceElement =
+          document.querySelector(".cart-total-price");
+        const minicartElement = document.querySelector(".minicart");
+
+        let totalQuantity = 0;
+        let totalPrice = 0;
+        minicartElement.innerHTML = "";
+
+        cart.forEach((item) => {
+          totalQuantity += item.quantity;
+          totalPrice += item.price * item.quantity;
+
+          minicartElement.innerHTML += `
+                  <li class="d-flex align-items-start">
+                    <div class="cart-img">
+                      <a href="#"><img src="image2/${item.image}.jpeg" alt="${
+            item.name
+          }" /></a>
+                    </div>
+                    <div class="cart-content">
+                      <h4><a href="#">${item.name}</a></h4>
+                      <div class="cart-price">
+                        <span class="new">${(
+                          item.price * item.quantity
+                        ).toFixed(2)} RS</span>
+                        <span> (${item.quantity} x ${item.price.toFixed(
+            2
+          )} RS) ${item.color ? `<br/> Color: ${item.color}` : ""} </span>
+                      </div>
+                    </div>
+                    <div class="del-icon">
+                     <a href="#" onclick="deleteItemFromCart('${(
+                       item.id + ""
+                     )?.replace(/'/g, "\\'")}')">
+    <i class="far fa-trash-alt"></i>
+</a>
+                    </div>
+                  </li>`;
+        });
+        if (+totalPrice)
+          minicartElement.innerHTML += `
+                <li>
+                  <div class="total-price">
+                    <span class="f-left">Total:</span>
+                    <span class="f-right">${totalPrice.toFixed(2)} RS</span>
+                  </div>
+                </li>
+                <li>
+                  <div class="checkout-link">
+                    <a class="red-color" href="checkout.html">Checkout</a>
+                  </div>
+                </li>`;
+
+        cartCountElement.textContent = totalQuantity;
+        cartTotalPriceElement.textContent = `${totalPrice.toFixed(1)} RS`;
+      }
+    </script>
+  </head>
+  <body>
+    <header class="header-style-two header-style-three">
+      <div id="sticky-header" class="main-header menu-area">
+        <div class="custom-container-two">
+          <div class="row">
+            <div class="col-12">
+              <div class="mobile-nav-toggler"><i class="fas fa-bars"></i></div>
+              <div class="menu-wrap">
+                <nav class="menu-nav show">
+                  <div class="logo">
+                    <a href="index.html"
+                      ><img
+                        src="image2/new.jpg"
+                        style="height: 100px"
+                        alt="Logo"
+                    /></a>
+                  </div>
+                  <div class="navbar-wrap main-menu d-none d-lg-flex">
+                    <ul class="navigation">
+                      <li><a href="index.html">Home</a></li>
+                      <li><a href="index.html#blog">BLOG</a></li>
+                    </ul>
+                  </div>
+                  <div class="header-action d-none d-md-block">
+                    <ul>
+                      <li class="header-shop-cart">
+                        <a href="#"
+                          ><i class="flaticon-shopping-bag"></i
+                          ><span class="cart-count">0</span></a
+                        >
+                        <span class="cart-total-price">0.00 RS</span>
+                        <ul class="minicart" style="overflow: auto"></ul>
+                      </li>
+                    </ul>
+                  </div>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  </body>
+</html>
